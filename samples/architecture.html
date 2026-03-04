@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>System Architecture Guide</title>
+</head>
+<body>
+    <h1>System Architecture Guide</h1>
+    <p><strong>Author:</strong> Engineering Team | <strong>Version:</strong> 2.0 | <strong>Last Updated:</strong> December 2025</p>
+
+    <h2>Overview</h2>
+    <p>
+        The Acme Platform follows a modular microservices architecture deployed on
+        Kubernetes. Services communicate via gRPC for internal calls and expose REST
+        APIs for external consumers. All data flows through a central event bus
+        (Apache Kafka) for asynchronous processing.
+    </p>
+
+    <h2>Service Topology</h2>
+
+    <h3>Core Services</h3>
+    <table border="1">
+        <thead>
+            <tr><th>Service</th><th>Tech Stack</th><th>Database</th><th>Responsibility</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>API Gateway</td>
+                <td>Envoy Proxy</td>
+                <td>None</td>
+                <td>Auth, rate limiting, routing, TLS termination</td>
+            </tr>
+            <tr>
+                <td>User Service</td>
+                <td>Go + gRPC</td>
+                <td>PostgreSQL</td>
+                <td>Accounts, authentication, sessions, permissions</td>
+            </tr>
+            <tr>
+                <td>Project Service</td>
+                <td>Go + gRPC</td>
+                <td>PostgreSQL (pg_trgm)</td>
+                <td>Project CRUD, member management, settings</td>
+            </tr>
+            <tr>
+                <td>Billing Service</td>
+                <td>Python + FastAPI</td>
+                <td>PostgreSQL (separate, PCI)</td>
+                <td>Subscriptions, usage tracking, invoicing, Stripe</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Supporting Services</h3>
+    <table border="1">
+        <thead>
+            <tr><th>Service</th><th>Tech Stack</th><th>Database</th><th>Responsibility</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Notification Service</td>
+                <td>Node.js</td>
+                <td>Redis (queue)</td>
+                <td>Email (SES), Slack, webhook delivery</td>
+            </tr>
+            <tr>
+                <td>Search Service</td>
+                <td>Python + FastAPI</td>
+                <td>Elasticsearch 8.x</td>
+                <td>Full-text search, filters, facets</td>
+            </tr>
+            <tr>
+                <td>File Service</td>
+                <td>Go</td>
+                <td>S3 + metadata in PostgreSQL</td>
+                <td>Uploads, virus scanning, thumbnails, CDN</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>Infrastructure</h2>
+
+    <h3>Kubernetes Clusters</h3>
+    <table border="1">
+        <thead>
+            <tr><th>Cluster</th><th>Region</th><th>Nodes</th><th>Purpose</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>prod-us-east</td><td>us-east-1</td><td>12</td><td>Primary production</td></tr>
+            <tr><td>prod-eu-west</td><td>eu-west-1</td><td>8</td><td>EMEA traffic</td></tr>
+            <tr><td>staging</td><td>us-east-1</td><td>4</td><td>Pre-production</td></tr>
+            <tr><td>dev</td><td>us-east-1</td><td>2</td><td>Development</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Data Stores</h3>
+    <table border="1">
+        <thead>
+            <tr><th>Technology</th><th>Version</th><th>Use Case</th><th>Hosting</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>PostgreSQL</td><td>16</td><td>Transactional data</td><td>RDS Multi-AZ</td></tr>
+            <tr><td>Elasticsearch</td><td>8.x</td><td>Search indices</td><td>3-node cluster</td></tr>
+            <tr><td>Redis</td><td>7</td><td>Caching, sessions</td><td>ElastiCache</td></tr>
+            <tr><td>Apache Kafka</td><td>3.6</td><td>Event streaming</td><td>MSK</td></tr>
+            <tr><td>S3</td><td>N/A</td><td>Object storage</td><td>AWS (intelligent tiering)</td></tr>
+        </tbody>
+    </table>
+
+    <h2>Request Lifecycle</h2>
+    <ol>
+        <li>Client sends HTTPS request to the load balancer</li>
+        <li>Load balancer routes to API Gateway (Envoy)</li>
+        <li>Gateway validates JWT token with User Service</li>
+        <li>Gateway routes request to the appropriate backend service</li>
+        <li>Backend service processes request, writes to its database</li>
+        <li>Backend service publishes event to Kafka</li>
+        <li>Downstream services consume events asynchronously</li>
+        <li>Response flows back through Gateway to client</li>
+    </ol>
+
+    <h2>Kafka Topics</h2>
+    <table border="1">
+        <thead>
+            <tr><th>Topic</th><th>Schema</th><th>Producers</th><th>Consumers</th></tr>
+        </thead>
+        <tbody>
+            <tr><td><code>acme.users.events</code></td><td>Avro</td><td>User Service</td><td>Search, Notification, Audit</td></tr>
+            <tr><td><code>acme.projects.events</code></td><td>Avro</td><td>Project Service</td><td>Search, Notification</td></tr>
+            <tr><td><code>acme.billing.events</code></td><td>Avro</td><td>Billing Service</td><td>Notification, Audit</td></tr>
+            <tr><td><code>acme.audit.log</code></td><td>Avro</td><td>All services</td><td>Audit Service, S3 archiver</td></tr>
+        </tbody>
+    </table>
+
+    <h2>Monitoring Stack</h2>
+    <ul>
+        <li><strong>Prometheus + Grafana</strong> for metrics and dashboards</li>
+        <li><strong>Jaeger</strong> for distributed tracing (10% sample rate)</li>
+        <li><strong>ELK Stack</strong> for log aggregation</li>
+        <li><strong>PagerDuty</strong> for on-call alerting</li>
+        <li><strong>Datadog</strong> for APM and infrastructure monitoring</li>
+    </ul>
+
+    <h2>Security</h2>
+
+    <h3>Network</h3>
+    <ul>
+        <li>All inter-service communication uses mTLS</li>
+        <li>Network policies restrict pod-to-pod communication</li>
+        <li>WAF rules on API Gateway block common attack patterns</li>
+        <li>DDoS protection via CloudFront and AWS Shield</li>
+    </ul>
+
+    <h3>Data</h3>
+    <ul>
+        <li>Encryption at rest (AES-256) for all databases</li>
+        <li>Encryption in transit (TLS 1.3) for all connections</li>
+        <li>PII fields use application-level encryption with rotating keys</li>
+        <li>Database credentials managed via HashiCorp Vault</li>
+    </ul>
+
+    <h3>Compliance</h3>
+    <table border="1">
+        <thead>
+            <tr><th>Standard</th><th>Status</th><th>Audit Frequency</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>SOC 2 Type II</td><td>Certified</td><td>Annual</td></tr>
+            <tr><td>GDPR</td><td>Compliant (data residency controls)</td><td>Continuous</td></tr>
+            <tr><td>HIPAA</td><td>Ready (BAA available)</td><td>Annual</td></tr>
+            <tr><td>Penetration Testing</td><td>Passed</td><td>Annual (third-party)</td></tr>
+        </tbody>
+    </table>
+</body>
+</html>

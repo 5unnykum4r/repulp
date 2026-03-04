@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LLM Code Generation: Literature Review</title>
+</head>
+<body>
+    <h1>LLM-Powered Code Generation: A Literature Review</h1>
+    <p><em>Last updated: December 2025</em></p>
+
+    <h2>1. Introduction</h2>
+    <p>
+        Large language models have transformed automated code generation from a
+        research curiosity into a practical tool used by millions of developers daily.
+        This review covers key papers, benchmarks, and emerging patterns in the field.
+    </p>
+
+    <h2>2. Benchmark Comparison</h2>
+    <p>Performance of major models on standard code generation benchmarks:</p>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Model</th>
+                <th>Parameters</th>
+                <th>HumanEval pass@1</th>
+                <th>SWE-bench Resolved</th>
+                <th>License</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>Codex (2021)</td><td>12B</td><td>28.8%</td><td>N/A</td><td>Proprietary</td></tr>
+            <tr><td>StarCoder (2023)</td><td>15.5B</td><td>33.6%</td><td>N/A</td><td>Open (BigCode)</td></tr>
+            <tr><td>CodeLlama (2023)</td><td>34B</td><td>53.7%</td><td>N/A</td><td>Open (Meta)</td></tr>
+            <tr><td>GPT-4 (2023)</td><td>Unknown</td><td>67.0%</td><td>1.7%</td><td>Proprietary</td></tr>
+            <tr><td>Claude 3.5 Sonnet (2024)</td><td>Unknown</td><td>92.0%</td><td>49.0%</td><td>Proprietary</td></tr>
+            <tr><td>DeepSeek-V3 (2025)</td><td>671B MoE</td><td>82.6%</td><td>42.0%</td><td>Open</td></tr>
+            <tr><td>Claude Opus 4 (2025)</td><td>Unknown</td><td>95.2%</td><td>72.5%</td><td>Proprietary</td></tr>
+        </tbody>
+    </table>
+
+    <h2>3. Key Papers</h2>
+
+    <h3>3.1 Evaluating Large Language Models Trained on Code</h3>
+    <p>
+        <strong>Authors:</strong> Chen et al. (OpenAI, 2021)<br>
+        The Codex paper introduced the <a href="https://github.com/openai/human-eval">HumanEval benchmark</a>
+        (164 hand-written Python problems). Key finding: sampling multiple solutions
+        and selecting the best dramatically improves results (pass@100 reached 70.2%
+        vs 28.8% for pass@1).
+    </p>
+
+    <h3>3.2 Competition-Level Code Generation with AlphaCode</h3>
+    <p>
+        <strong>Authors:</strong> Li et al. (DeepMind, 2022)<br>
+        Generated millions of candidates for competitive programming problems,
+        then filtered using test cases. Reached top 54% of Codeforces competitors.
+        Key insight: brute-force generation + filtering outperforms careful single-shot
+        generation for algorithmic problems.
+    </p>
+
+    <h3>3.3 SWE-bench: Real-World GitHub Issues</h3>
+    <p>
+        <strong>Authors:</strong> Jimenez et al. (Princeton, 2024)<br>
+        Benchmark of 2,294 real GitHub issues from 12 Python repos. Models must
+        produce patches that pass the repo's test suite. See
+        <a href="https://www.swebench.com/">swebench.com</a> for the leaderboard.
+    </p>
+
+    <h2>4. Evaluation Benchmarks</h2>
+    <table border="1">
+        <thead>
+            <tr><th>Benchmark</th><th>What It Measures</th><th>Realism</th><th>Language</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>HumanEval</td><td>Isolated function generation</td><td>Low</td><td>Python</td></tr>
+            <tr><td>MBPP</td><td>Simple programming problems</td><td>Low</td><td>Python</td></tr>
+            <tr><td>SWE-bench</td><td>Real GitHub issue resolution</td><td>High</td><td>Python</td></tr>
+            <tr><td>LiveCodeBench</td><td>Fresh competitive programming</td><td>Medium</td><td>Multi</td></tr>
+            <tr><td>BigCodeBench</td><td>Complex function composition</td><td>Medium</td><td>Python</td></tr>
+            <tr><td>Aider polyglot</td><td>Multi-language editing</td><td>High</td><td>Multi</td></tr>
+        </tbody>
+    </table>
+
+    <h2>5. Emerging Patterns</h2>
+
+    <h3>5.1 Agentic Code Generation</h3>
+    <p>The shift from "model generates code" to "model uses tools to iteratively
+    develop code" has produced the largest practical gains:</p>
+    <ol>
+        <li><strong>File navigation</strong> &mdash; Read existing code to understand context</li>
+        <li><strong>Test execution</strong> &mdash; Run tests to verify generated code works</li>
+        <li><strong>Error correction</strong> &mdash; Parse error messages and fix issues</li>
+        <li><strong>Multi-step planning</strong> &mdash; Break complex tasks into subtasks</li>
+    </ol>
+    <p>
+        Tools like <a href="https://claude.ai/code">Claude Code</a>,
+        <a href="https://cursor.com">Cursor</a>, and
+        <a href="https://aider.chat">Aider</a> implement variations of this loop.
+    </p>
+
+    <h3>5.2 Retrieval-Augmented Generation for Code</h3>
+    <ul>
+        <li>Embed code chunks with specialized models (CodeBERT, UniXcoder)</li>
+        <li>Retrieve relevant files/functions before generation</li>
+        <li>Include test files as context to guide implementation</li>
+    </ul>
+
+    <h2>6. Open Questions</h2>
+    <ol>
+        <li>How do we measure code quality beyond "does it pass tests"?</li>
+        <li>What's the ceiling for LLM code generation?</li>
+        <li>How should codebases be structured to be LLM-friendly?</li>
+    </ol>
+
+    <h2>7. References</h2>
+    <ul>
+        <li><a href="https://github.com/openai/human-eval">HumanEval benchmark</a></li>
+        <li><a href="https://www.swebench.com/">SWE-bench</a></li>
+        <li><a href="https://huggingface.co/datasets/bigcode/the-stack">The Stack dataset</a></li>
+        <li><a href="https://bigcode-bench.github.io/">BigCodeBench</a></li>
+    </ul>
+</body>
+</html>

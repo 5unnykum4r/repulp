@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Acme Platform - Changelog</title>
+</head>
+<body>
+    <h1>Acme Platform Changelog</h1>
+
+    <h2>v3.2.1 <small>(December 10, 2025)</small></h2>
+    <p><em>Security patch and bug fixes</em></p>
+    <ul>
+        <li><strong>Security [SEC-201]:</strong> Fixed XSS vulnerability in user profile bio field. Input is now sanitized server-side before storage and escaped on render.</li>
+        <li><strong>Bugfix [BUG-1847]:</strong> Fixed race condition in concurrent project deletion that could leave orphaned files in object storage.</li>
+        <li><strong>Bugfix [BUG-1852]:</strong> Corrected timezone handling in scheduled report delivery. Reports now respect the organization's configured timezone instead of UTC.</li>
+        <li><strong>Performance [PERF-98]:</strong> Reduced dashboard load time by 40% by implementing Redis caching for aggregated metrics queries.</li>
+    </ul>
+
+    <h2>v3.2.0 <small>(November 15, 2025)</small></h2>
+    <p><em>New billing features and API improvements</em></p>
+    <ul>
+        <li><strong>Feature [FEAT-412]:</strong> Added usage-based billing support. Organizations can now configure metered billing for API calls, storage, and compute minutes.</li>
+        <li><strong>Feature [FEAT-415]:</strong> New invoice PDF generation with customizable templates. Supports company logo, custom footer text, and multiple currencies.</li>
+        <li><strong>Feature [FEAT-418]:</strong> Added webhook signature verification using HMAC-SHA256. All outgoing webhooks now include <code>X-Acme-Signature</code> header.</li>
+        <li><strong>Improvement [FEAT-420]:</strong> API rate limiting now uses sliding window algorithm instead of fixed window.</li>
+        <li><strong>Deprecation [DEP-15]:</strong> Deprecated XML response format. All endpoints now return JSON only. XML support will be removed in v4.0.</li>
+    </ul>
+
+    <h2>v3.1.0 <small>(September 20, 2025)</small></h2>
+    <p><em>Project management enhancements</em></p>
+    <ul>
+        <li><strong>Feature [FEAT-390]:</strong> Project templates: create new projects from predefined templates with pre-configured settings, labels, and workflows.</li>
+        <li><strong>Feature [FEAT-395]:</strong> Bulk user import via CSV upload. Supports up to 10,000 users per import with automatic duplicate detection.</li>
+        <li><strong>Improvement [FEAT-398]:</strong> Improved search indexing. Full-text search now covers file contents, comments, and custom field values. Average query time reduced from 800ms to 120ms.</li>
+        <li><strong>Bugfix [BUG-1790]:</strong> Fixed memory leak in WebSocket connection handler that caused server OOM after approximately 72 hours of continuous operation.</li>
+    </ul>
+
+    <h2>v3.0.0 <small>(June 1, 2025)</small></h2>
+    <p><em>Major version with breaking changes</em></p>
+
+    <h3>Breaking Changes</h3>
+    <ul>
+        <li><strong>[FEAT-350]:</strong> New authentication system using OAuth 2.0 + PKCE. Legacy API keys (v2 format) are no longer accepted. Migrate using the key exchange endpoint before upgrading.</li>
+        <li><strong>[FEAT-355]:</strong> Removed XML response format from all endpoints. Use JSON exclusively.</li>
+    </ul>
+
+    <h3>New Features</h3>
+    <ul>
+        <li><strong>[FEAT-360]:</strong> Multi-organization support. Users can belong to multiple organizations and switch between them without re-authenticating.</li>
+        <li><strong>[FEAT-365]:</strong> Audit logging for all administrative actions. Logs are retained for 365 days and exportable in CSV or JSON format.</li>
+        <li><strong>[FEAT-370]:</strong> New permission model with fine-grained roles. Custom roles can be created with specific permission sets per resource type.</li>
+    </ul>
+
+    <h2>Migration Guide: v2.x to v3.0</h2>
+    <table border="1">
+        <thead>
+            <tr><th>Change</th><th>v2.x Behavior</th><th>v3.0 Behavior</th><th>Action Required</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Authentication</td>
+                <td>Static API key in header</td>
+                <td>OAuth 2.0 + PKCE tokens</td>
+                <td>Exchange keys at <code>/auth/migrate</code> before cutoff</td>
+            </tr>
+            <tr>
+                <td>Response format</td>
+                <td>JSON or XML (via Accept header)</td>
+                <td>JSON only</td>
+                <td>Remove <code>Accept: application/xml</code> from clients</td>
+            </tr>
+            <tr>
+                <td>User endpoints</td>
+                <td><code>/api/v2/users</code></td>
+                <td><code>/v3/users</code></td>
+                <td>Update base URL and remove <code>/api</code> prefix</td>
+            </tr>
+            <tr>
+                <td>Pagination</td>
+                <td>Offset-based (<code>?page=2</code>)</td>
+                <td>Cursor-based (<code>?cursor=abc</code>)</td>
+                <td>Switch pagination logic to use cursor tokens</td>
+            </tr>
+            <tr>
+                <td>Rate limits</td>
+                <td>500 req/min for all plans</td>
+                <td>1000/min standard, 10000/min enterprise</td>
+                <td>No action needed (limits increased)</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

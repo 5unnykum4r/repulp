@@ -1,0 +1,79 @@
+[project]
+name = "repulp"
+version = "0.1.0"
+description = "Parallel batch document conversion, watch mode, and structured extraction — powered by MarkItDown."
+readme = "README.md"
+authors = [
+    { name = "Sunny Kumar", email = "5unnykum4r@gmail.com" }
+]
+license = "MIT"
+requires-python = ">=3.10"
+keywords = [
+    "markdown",
+    "converter",
+    "pdf",
+    "docx",
+    "document",
+    "markitdown",
+    "cli",
+    "batch",
+    "parallel",
+    "extraction",
+    "dataframe",
+    "watch",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Text Processing :: Markup :: Markdown",
+    "Topic :: Utilities",
+    "Typing :: Typed",
+]
+dependencies = [
+    "markitdown[all]>=0.1.5",
+    "typer>=0.15.0",
+    "rich>=13.0.0",
+    "tomli>=2.0.0;python_version<'3.11'",
+    "httpx>=0.27.0",
+    "watchfiles>=1.0.0",
+]
+
+[project.optional-dependencies]
+tables = ["pandas>=2.0.0"]
+
+[project.urls]
+Homepage = "https://github.com/5unnyKu/repulp"
+Repository = "https://github.com/5unnyKu/repulp"
+Issues = "https://github.com/5unnyKu/repulp/issues"
+
+[project.scripts]
+repulp = "repulp.cli:app"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/repulp"]
+
+[tool.repulp]
+output_dir = ""
+recursive = false
+clean = true
+workers = 0
+include = []
+exclude = []
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=6.0.0",
+    "pandas>=2.0.0",
+]

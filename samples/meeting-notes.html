@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Product Team Standup - December 12, 2025</title>
+</head>
+<body>
+    <h1>Product Team Standup</h1>
+    <p><strong>Date:</strong> December 12, 2025 &mdash; 10:00 AM PST</p>
+    <p>
+        <strong>Attendees:</strong> Alex Rivera (PM), Priya Sharma (Engineering Lead),
+        Marcus Cole (Design), Lin Wei (Backend), Olivia Park (Frontend)
+    </p>
+
+    <h2>Sprint 47 Progress</h2>
+
+    <h3>Completed</h3>
+    <ul>
+        <li>
+            <strong>[PROD-1234] SSO Integration</strong> &mdash; Okta and Azure AD now live
+            in staging. 14 of 16 test cases passing. Two edge cases remain around token
+            refresh when session exceeds 24 hours. Priya assigned to fix by Friday.
+        </li>
+        <li>
+            <strong>[PROD-1238] Dashboard Redesign Phase 1</strong> &mdash; New layout shipped
+            to 10% of users via feature flag. Early metrics show 15% improvement in
+            time-to-first-action. Marcus to present full A/B results next Tuesday.
+        </li>
+        <li>
+            <strong>[PROD-1241] API Rate Limiting</strong> &mdash; Sliding window implementation
+            deployed. 429 responses now include <code>Retry-After</code> header.
+        </li>
+    </ul>
+
+    <h3>In Progress</h3>
+    <ul>
+        <li>
+            <strong>[PROD-1245] Bulk Export</strong> &mdash; CSV and PDF export working.
+            XLSX export blocked on <code>openpyxl 3.2.x</code> dependency issue.
+            Lin investigating a pin to 3.1.5.
+        </li>
+        <li>
+            <strong>[PROD-1247] Mobile Responsive Tables</strong> &mdash; Horizontal scroll
+            working on iOS Safari. Android Chrome still has a rendering glitch with
+            tables wider than 1200px. Targeting next Wednesday.
+        </li>
+    </ul>
+
+    <h3>Blocked</h3>
+    <ul>
+        <li>
+            <strong>[PROD-1250] Webhook Retry Mechanism</strong> &mdash; Waiting on infra
+            team to provision the dead-letter queue. Ticket <code>INFRA-892</code> filed
+            two weeks ago, no update. Alex to escalate.
+        </li>
+    </ul>
+
+    <h2>Q1 2026 Roadmap</h2>
+    <table border="1">
+        <thead>
+            <tr><th>Priority</th><th>Feature</th><th>Owner</th><th>Target</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>P1</td><td>Real-time collaboration</td><td>Priya</td><td>Feb 14</td></tr>
+            <tr><td>P1</td><td>SOC 2 audit logging</td><td>Lin</td><td>Jan 31</td></tr>
+            <tr><td>P1</td><td>Self-serve onboarding flow</td><td>Marcus / Olivia</td><td>Mar 15</td></tr>
+            <tr><td>P2</td><td>Advanced search with filters</td><td>Lin</td><td>Mar 31</td></tr>
+            <tr><td>P2</td><td>Custom report builder</td><td>Olivia</td><td>Mar 31</td></tr>
+            <tr><td>P2</td><td>Slack integration v2</td><td>TBD</td><td>Mar 31</td></tr>
+            <tr><td>P3</td><td>Dark mode</td><td>Marcus</td><td>Stretch</td></tr>
+            <tr><td>P3</td><td>Keyboard shortcuts overhaul</td><td>Olivia</td><td>Stretch</td></tr>
+        </tbody>
+    </table>
+
+    <p><em>Decision:</em> Team agreed to timebox real-time collaboration to 6 weeks.
+    If core editing works by Feb 14, we ship. Otherwise, descope to view-only
+    cursors and push full editing to Q2.</p>
+
+    <h2>Technical Debt</h2>
+    <table border="1">
+        <thead>
+            <tr><th>Item</th><th>Effort</th><th>Impact</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Legacy auth module removal</td>
+                <td>3 weeks</td>
+                <td>High</td>
+                <td>Still handles 12% of login traffic via old cookie flow. Can remove after SSO migration in January.</td>
+            </tr>
+            <tr>
+                <td>Monolithic test suite split</td>
+                <td>2 weeks</td>
+                <td>Medium</td>
+                <td>CI takes 45 min, should be under 15. Split into unit/integration/e2e with parallel execution.</td>
+            </tr>
+            <tr>
+                <td>Reports N+1 query fix</td>
+                <td>1 week</td>
+                <td>High</td>
+                <td>200+ queries for 50 rows. Caused a P1 last month (15s page load).</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>Action Items</h2>
+    <table border="1">
+        <thead>
+            <tr><th>Owner</th><th>Action</th><th>Due</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>Priya</td><td>Fix SSO token refresh edge cases</td><td>Dec 15</td></tr>
+            <tr><td>Marcus</td><td>Present A/B test results for dashboard</td><td>Dec 17</td></tr>
+            <tr><td>Lin</td><td>Resolve openpyxl dependency conflict</td><td>Dec 13</td></tr>
+            <tr><td>Olivia</td><td>Fix Android Chrome table rendering</td><td>Dec 18</td></tr>
+            <tr><td>Alex</td><td>Escalate webhook DLQ ticket with infra</td><td>Dec 12</td></tr>
+            <tr><td>Alex</td><td>Schedule Q1 roadmap review with leadership</td><td>Dec 19</td></tr>
+            <tr><td>Priya</td><td>Draft tech debt sprint proposal for January</td><td>Dec 20</td></tr>
+        </tbody>
+    </table>
+
+    <hr>
+    <p><em>Next standup: December 14, 2025 at 10:00 AM PST</em></p>
+</body>
+</html>

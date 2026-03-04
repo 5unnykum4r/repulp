@@ -1,0 +1,21 @@
+# .repulp.toml — Example repulp configuration
+# Copy this file to .repulp.toml in your project root.
+
+[repulp]
+# Output directory for converted markdown files (empty = alongside source files)
+output_dir = "./markdown"
+
+# Recursively scan directories
+recursive = true
+
+# Post-process markdown (normalize headings, fix tables, strip artifacts)
+clean = true
+
+# Number of parallel workers (0 = auto, based on CPU count)
+workers = 0
+
+# Only convert files matching these patterns (empty = all supported formats)
+include = ["*.pdf", "*.docx", "*.pptx"]
+
+# Skip files matching these patterns
+exclude = ["*.tmp"]

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Acme API Documentation - v3</title>
+</head>
+<body>
+    <h1>Acme API Documentation</h1>
+    <p>Version 3.0 | Base URL: <code>https://api.acme.io/v3</code></p>
+    <p>
+        The Acme API provides programmatic access to manage users, projects,
+        and billing. All requests require an API key passed via the
+        <code>Authorization: Bearer &lt;token&gt;</code> header.
+    </p>
+
+    <h2>Authentication</h2>
+    <p>
+        Generate API keys from your <a href="https://app.acme.io/settings/api">account settings</a>.
+        Keys are scoped to either <strong>read-only</strong> or <strong>read-write</strong>.
+        Rate limit: 1000 requests/minute for standard plans, 10,000 for enterprise.
+    </p>
+
+    <h2>Endpoints</h2>
+
+    <h3>Users</h3>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Method</th>
+                <th>Path</th>
+                <th>Description</th>
+                <th>Auth</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>GET</td>
+                <td><code>/users</code></td>
+                <td>List all users in the organization</td>
+                <td>read</td>
+            </tr>
+            <tr>
+                <td>GET</td>
+                <td><code>/users/{id}</code></td>
+                <td>Get a single user by ID</td>
+                <td>read</td>
+            </tr>
+            <tr>
+                <td>POST</td>
+                <td><code>/users</code></td>
+                <td>Create a new user</td>
+                <td>write</td>
+            </tr>
+            <tr>
+                <td>PATCH</td>
+                <td><code>/users/{id}</code></td>
+                <td>Update user fields</td>
+                <td>write</td>
+            </tr>
+            <tr>
+                <td>DELETE</td>
+                <td><code>/users/{id}</code></td>
+                <td>Deactivate a user (soft delete)</td>
+                <td>write</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Projects</h3>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Method</th>
+                <th>Path</th>
+                <th>Description</th>
+                <th>Auth</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>GET</td>
+                <td><code>/projects</code></td>
+                <td>List all projects</td>
+                <td>read</td>
+            </tr>
+            <tr>
+                <td>POST</td>
+                <td><code>/projects</code></td>
+                <td>Create a new project</td>
+                <td>write</td>
+            </tr>
+            <tr>
+                <td>GET</td>
+                <td><code>/projects/{id}/members</code></td>
+                <td>List project members</td>
+                <td>read</td>
+            </tr>
+            <tr>
+                <td>POST</td>
+                <td><code>/projects/{id}/members</code></td>
+                <td>Add a member to a project</td>
+                <td>write</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Billing</h3>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Method</th>
+                <th>Path</th>
+                <th>Description</th>
+                <th>Auth</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>GET</td>
+                <td><code>/billing/invoices</code></td>
+                <td>List all invoices</td>
+                <td>read</td>
+            </tr>
+            <tr>
+                <td>GET</td>
+                <td><code>/billing/invoices/{id}</code></td>
+                <td>Download invoice PDF</td>
+                <td>read</td>
+            </tr>
+            <tr>
+                <td>GET</td>
+                <td><code>/billing/usage</code></td>
+                <td>Current billing period usage</td>
+                <td>read</td>
+            </tr>
+            <tr>
+                <td>PUT</td>
+                <td><code>/billing/plan</code></td>
+                <td>Change subscription plan</td>
+                <td>write</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>Error Codes</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Meaning</th>
+                <th>Resolution</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>400</td>
+                <td>Bad Request</td>
+                <td>Check request body against the schema</td>
+            </tr>
+            <tr>
+                <td>401</td>
+                <td>Unauthorized</td>
+                <td>Verify your API key is valid and not expired</td>
+            </tr>
+            <tr>
+                <td>403</td>
+                <td>Forbidden</td>
+                <td>Your key lacks the required scope (read vs write)</td>
+            </tr>
+            <tr>
+                <td>404</td>
+                <td>Not Found</td>
+                <td>The resource ID does not exist</td>
+            </tr>
+            <tr>
+                <td>429</td>
+                <td>Rate Limited</td>
+                <td>Wait for the duration in the Retry-After header</td>
+            </tr>
+            <tr>
+                <td>500</td>
+                <td>Internal Server Error</td>
+                <td>Contact <a href="mailto:support@acme.io">support@acme.io</a> with your request ID</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>Webhooks</h2>
+    <p>
+        Configure webhooks at <a href="https://app.acme.io/settings/webhooks">webhook settings</a>.
+        Events are delivered with HMAC-SHA256 signatures in the <code>X-Acme-Signature</code> header.
+    </p>
+    <p>Supported events:</p>
+    <ul>
+        <li><code>user.created</code> — Fired when a new user is added</li>
+        <li><code>user.deleted</code> — Fired when a user is deactivated</li>
+        <li><code>project.created</code> — Fired when a new project is created</li>
+        <li><code>invoice.paid</code> — Fired when an invoice payment succeeds</li>
+        <li><code>invoice.failed</code> — Fired when a payment attempt fails</li>
+    </ul>
+
+    <h2>SDKs</h2>
+    <p>Official client libraries:</p>
+    <ul>
+        <li><a href="https://github.com/acme/acme-python">Python</a> — <code>pip install acme-sdk</code></li>
+        <li><a href="https://github.com/acme/acme-node">Node.js</a> — <code>npm install @acme/sdk</code></li>
+        <li><a href="https://github.com/acme/acme-go">Go</a> — <code>go get github.com/acme/acme-go</code></li>
+        <li><a href="https://github.com/acme/acme-ruby">Ruby</a> — <code>gem install acme-sdk</code></li>
+    </ul>
+
+    <h2>Changelog</h2>
+    <table border="1">
+        <thead>
+            <tr><th>Version</th><th>Date</th><th>Changes</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>3.0</td><td>2025-11-01</td><td>Added billing endpoints, webhook signatures, rate limiting</td></tr>
+            <tr><td>2.1</td><td>2025-06-15</td><td>Added project members endpoints, pagination support</td></tr>
+            <tr><td>2.0</td><td>2025-01-10</td><td>Breaking: new auth model, removed legacy XML responses</td></tr>
+            <tr><td>1.0</td><td>2024-03-01</td><td>Initial release with users and projects</td></tr>
+        </tbody>
+    </table>
+</body>
+</html>
